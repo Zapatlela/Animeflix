@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnimeFlix - Premium Anime Streaming</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        :root {
+            --primary: #ff3e6c;
+            --secondary: #4a00e0;
+            --dark: #121212;
+            --darker: #0a0a0a;
+            --light: #f5f5f5;
+            --gray: #2a2a2a;
+            --overlay: rgba(0, 0, 0, 0.85);
+        }
+        
+        body {
+            background-color: var(--darker);
+            color: var(--light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent);
+            padding: 20px 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        header.scrolled {
+            background: var(--overlay);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+        
+        .logo span {
+            color: var(--primary);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 30px;
+        }
+        
+        nav ul li a {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            position: relative;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary);
+        }
+        
+        nav ul li a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        
+        nav ul li a:hover::after {
+            width: 100%;
+        }
+        
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+        
+        .search-box {
+            position: relative;
+            margin-right: 20px;
+        }
+        
+        .search-box input {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 30px;
+            color: var(--light);
+            width: 200px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            width: 250px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 62, 108, 0.4);
+        }
+        
+        .btn-admin {
+            background: linear-gradient(45deg, #00c9ff, #92fe9d);
+            margin-left: 15px;
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
+                        url('https://images.unsplash.com/photo-1635189779577-555debfa6f0d?auto=format&fit=crop&q=80') no-repeat center center/cover;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-content {
+            max-width: 650px;
+            z-index: 2;
+            margin-top: 80px;
+        }
+        
+        .hero h2 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+        
+        .hero h2 span {
+            color: var(--primary);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            max-width: 600px;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .btn-large {
+            padding: 15px 35px;
+            font-size: 1.2rem;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        
+        /* Featured Section */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        .section-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+        
+        .view-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .view-all:hover {
+            transform: translateX(5px);
+        }
+        
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 30px;
+        }
+        
+        .anime-card {
+            background: var(--gray);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .anime-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        
+        .anime-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .anime-info {
+            padding: 15px;
+        }
+        
+        .anime-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .anime-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .episode-tag {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--primary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .rating {
+            display: flex;
+            align-items: center;
+        }
+        
+        .rating span {
+            color: #ffc107;
+            margin-right: 5px;
+        }
+        
+        /* Admin Section */
+        .admin-section {
+            background: var(--dark);
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 60px;
+        }
+        
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .admin-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .admin-header p {
+            color: #aaa;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .admin-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 30px;
+        }
+        
+        .admin-panel h3 {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+        }
+        
+        .upload-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--light);
+            font-size: 1rem;
+        }
+        
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+        }
+        
+        .btn-upload {
+            background: linear-gradient(45deg, #00c9ff, #92fe9d);
+            margin-top: 20px;
+            width: 100%;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--dark);
+            padding: 60px 0 30px;
+            margin-top: 80px;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--primary);
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-column ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-column ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero h2 {
+                font-size: 3rem;
+            }
+            
+            nav ul {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .anime-grid {
+                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .header-content {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .search-box {
+                margin: 0 0 15px;
+            }
+            
+            .hero {
+                text-align: center;
+            }
+            
+            .hero-content {
+                margin: 150px auto 0;
+            }
+            
+            .hero-buttons {
+                align-items: center;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .admin-section {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>Anime<span>Flix</span></h1>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#trending">Trending</a></li>
+                        <li><a href="#new">New Releases</a></li>
+                        <li><a href="#genres">Genres</a></li>
+                        <li><a href="#admin">Admin</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <div class="search-box">
+                        <input type="text" placeholder="Search anime...">
+                    </div>
+                    <a href="#" class="btn">Sign In</a>
+                    <a href="#admin" class="btn btn-admin">Admin Panel</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Unlimited <span>Anime</span> Streaming Anytime, Anywhere</h2>
+                <p>Watch thousands of episodes from classic and latest anime series in HD quality. No ads, no interruptions. Just pure anime enjoyment.</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn btn-large">Start Watching Free</a>
+                    <a href="#" class="btn btn-large btn-secondary">Learn More</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Anime -->
+    <section class="section" id="trending">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Trending Now</h2>
+                <a href="#" class="view-all">View All</a>
+            </div>
+            <div class="anime-grid">
+                <!-- Anime Card 1 -->
+                <div class="anime-card">
+                    <div class="episode-tag">EP 12</div>
+                    <img src="https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?auto=format&fit=crop&q=80" alt="Demon Slayer">
+                    <div class="anime-info">
+                        <h3>Demon Slayer: Kimetsu no Yaiba</h3>
+                        <div class="anime-meta">
+                            <div class="rating">★★★★☆</div>
+                            <div>Action</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Anime Card 2 -->
+                <div class="anime-card">
+                    <div class="episode-tag">EP 24</div>
+                    <img src="https://images.unsplash.com/photo-1635189779577-555debfa6f0d?auto=format&fit=crop&q=80" alt="Attack on Titan">
+                    <div class="anime-info">
+                        <h3>Attack on Titan: Final Season</h3>
+                        <div class="anime-meta">
+                            <div class="rating">★★★★★</div>
+                            <div>Drama</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Anime Card 3 -->
+                <div class="anime-card">
+                    <div class="episode-tag">EP 8</div>
+                    <img src="https://images.unsplash.com/photo-1533279443086-d1c19a186416?auto=format&fit=crop&q=80" alt="Jujutsu Kaisen">
+                    <div class="anime-info">
+                        <h3>Jujutsu Kaisen Season 2</h3>
+                        <div class="anime-meta">
+                            <div class="rating">★★★★☆</div>
+                            <div>Supernatural</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Anime Card 4 -->
+                <div class="anime-card">
+                    <div class="episode-tag">EP 16</div>
+                    <img src="https://images.unsplash.com/photo-1558901357-ca41e027e43a?auto=format&fit=crop&q=80" alt="One Piece">
+                    <div class="anime-info">
+                        <h3>One Piece: Wano Country</h3>
+                        <div class="anime-meta">
+                            <div class="rating">★★★★☆</div>
+                            <div>Adventure</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Releases -->
+    <section class="section" id="new">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">New Releases</h2>
+                <a href="#" class="view-all">View All</a>
+            </div>
+            <div class="anime-grid">
+                <!-- Anime Card 5 -->
+                <div class="anime-card">
+                    <div class="episode-tag">NEW</div>
+                    <img src="https://images.unsplash.com/photo-1541562232579-512a21360020?auto=format&fit=crop&q=80" alt="Spy x Family">
+                    <div class="anime-info">
+                        <h3>Spy x Family Part 2</h3>
+                        <div class="anime-meta">
+                            <div class="rating">★★★★★</div>
+                            <div>Comedy</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Anime Card 6 -->
+                <div class="anime-card">
+                    <div class="episode-tag">NEW</div>
+                    <img src="https://images.unsplash.com/photo-1501426026826-31c667bdf23d?auto=format&fit=crop&q=80" alt="Chainsaw Man">
+                    <div class="anime-info">
+                        <h3>Chainsaw Man</h3>
+                        <div class="anime-meta">
+                            <div class="rating">★★★★☆</div>
+                            <div>Action</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Anime Card 7 -->
+                <div class="anime-card">
+                    <div class="episode-tag">NEW</div>
+                    <img src="https://images.unsplash.com/photo-1598520106830-8c45c2035460?auto=format&fit=crop&q=80" alt="My Hero Academia">
+                    <div class="anime-info">
+                        <h3>My Hero Academia Season 6</h3>
+                        <div class="anime-meta">
+                            <div class="rating">★★★★☆</div>
+                            <div>Superhero</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Anime Card 8 -->
+                <div class="anime-card">
+                    <div class="episode-tag">NEW</div>
+                    <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80" alt="Bleach">
+                    <div class="anime-info">
+                        <h3>Bleach: Thousand-Year Blood War</h3>
+                        <div class="anime-meta">
+                            <div class="rating">★★★★★</div>
+                            <div>Action</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel -->
+    <section class="section" id="admin">
+        <div class="container">
+            <div class="admin-section">
+                <div class="admin-header">
+                    <h2>Admin Content Management</h2>
+                    <p>Upload new episodes, manage existing content, and monitor your streaming platform from this secure admin panel</p>
+                </div>
+                
+                <div class="admin-panel">
+                    <h3>Upload New Episode</h3>
+                    <form class="upload-form">
+                        <div class="form-group">
+                            <label for="anime-title">Anime Title</label>
+                            <input type="text" id="anime-title" placeholder="Enter anime title">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="episode-number">Episode Number</label>
+                            <input type="number" id="episode-number" placeholder="Enter episode number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="season-number">Season Number</label>
+                            <input type="number" id="season-number" placeholder="Enter season number">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="episode-title">Episode Title</label>
+                            <input type="text" id="episode-title" placeholder="Enter episode title">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="description">Episode Description</label>
+                            <textarea id="description" placeholder="Enter episode description"></textarea>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="thumbnail">Thumbnail Image</label>
+                            <input type="file" id="thumbnail">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="video-file">Video File</label>
+                            <input type="file" id="video-file" accept="video/*">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="genres">Genres</label>
+                            <select id="genres" multiple>
+                                <option value="action">Action</option>
+                                <option value="adventure">Adventure</option>
+                                <option value="comedy">Comedy</option>
+                                <option value="drama">Drama</option>
+                                <option value="fantasy">Fantasy</option>
+                                <option value="romance">Romance</option>
+                                <option value="sci-fi">Sci-Fi</option>
+                                <option value="slice-of-life">Slice of Life</option>
+                            </select>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-upload">Upload Episode</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>AnimeFlix</h3>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Help Center</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Browse</h3>
+                    <ul>
+                        <li><a href="#">Popular Anime</a></li>
+                        <li><a href="#">New Releases</a></li>
+                        <li><a href="#">Movies</a></li>
+                        <li><a href="#">Genres</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Legal</h3>
+                    <ul>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">Copyright</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3>Connect</h3>
+                    <ul>
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">Instagram</a></li>
+                        <li><a href="#">Discord</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2023 AnimeFlix Streaming Service. All rights reserved. Anime titles and images are property of their respective owners.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple script for header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
